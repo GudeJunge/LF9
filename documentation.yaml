@@ -1,0 +1,247 @@
+openapi: 3.0.1
+info:
+  title: Todo-Listen-Verwaltung
+  description: ""
+  contact:
+    email: tomtomwillhill@gmx.de
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 0.1.0
+servers:
+- url: http://127.0.0.1:3000/
+tags:
+- name: Listenverwaltung
+paths:
+  /list:
+    post:
+      tags:
+      - Listenverwaltung
+      summary: Add new list
+      operationId: addList
+      requestBody:
+        description: list object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewTodoList'
+        required: true
+      responses:
+        201:
+          description: List added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TodoList'
+        400:
+          description: Invalid parameters
+          content: {}
+        500:
+          description: Unable to create new todo list
+          content: {}
+      x-codegen-request-body-name: body
+  /lists:
+    get:
+      tags:
+      - Listenverwaltung
+      summary: Get all lists
+      operationId: getLists
+      responses:
+        200:
+          description: Lists returned
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TodoList'
+        500:
+          description: Unable to get lists
+          content: {}
+  /list/{list_id}/item:
+    post:
+      tags:
+      - Listenelementverwaltung
+      summary: Add new list item
+      operationId: post_new_todo
+      parameters:
+      - name: list_id
+        in: path
+        description: list id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: list item object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewTodoEntry'
+      responses:
+        201:
+          description: List item returned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TodoEntry'
+        400:
+          description: Invalid UUID
+          content: {}
+        404:
+          description: Todo list not found
+          content: {}
+        500:
+          description: Unable to create todo
+          content: {}
+      x-codegen-request-body-name: body
+  /list/{list_id}:
+    get:
+      tags:
+      - Listenelementverwaltung
+      summary: Get all items from list
+      operationId: get_todo_list_items
+      parameters:
+      - name: list_id
+        in: path
+        description: list id
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: List item returned
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TodoEntry'
+        400:
+          description: Invalid UUID
+          content: {}
+        404:
+          description: Todo list not found
+          content: {}
+        500:
+          description: Unable to get todo list items
+          content: {}
+    delete:
+      tags:
+      - Listenverwaltung
+      summary: Delete a list
+      operationId: delete_list_by_id
+      parameters:
+      - name: list_id
+        in: path
+        description: list id
+        required: true
+        schema:
+          type: string
+      responses:
+        204:
+          description: List was deleted
+          content: {}
+        400:
+          description: Invalid list uuid
+          content: {}
+        404:
+          description: Todo list not found
+          content: {}
+        500:
+          description: Unable to delete todo list
+          content: {}
+  /list/{list_id}/item/{item_id}:
+    parameters:
+    - name: list_id
+      in: path
+      description: list id
+      required: true
+      schema:
+        type: string
+    - name: item_id
+      in: path
+      description: item id
+      required: true
+      schema:
+        type: string
+    patch:
+      tags:
+      - Listenelementverwaltung
+      summary: Edit list item
+      operationId: patch_todo_list_item
+      requestBody:
+        description: list item object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewTodoEntry'
+      responses:
+        200:
+          description: New list item returned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TodoEntry'
+        400:
+          description: Invalid UUID
+          content: {}
+        404:
+          description: Todo item not found
+          content: {}
+        500:
+          description: Unable to edit todo list item
+          content: {}
+    delete:
+      tags:
+      - Listenelementverwaltung
+      summary: Delete a list item
+      operationId: delete_todo_list_item
+      responses:
+        204:
+          description: List item was deleted
+          content: {}
+        400:
+          description: Invalid UUID
+          content: {}
+        404:
+          description: Todo item not found
+          content: {}
+        500:
+          description: Unable to delete todo list item
+          content: {}
+components:
+  schemas:
+    TodoList:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+    NewTodoList:
+      type: object
+      properties:
+        name:
+          type: string
+    TodoEntry:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        list_id:
+          type: string
+          format: uuid
+    NewTodoEntry:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+```
